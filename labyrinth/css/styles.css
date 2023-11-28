@@ -1,0 +1,25 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.labyrinth {
+  display: grid;
+  /* Ajuster les dimensions selon les besoins */
+  grid-template-columns: repeat(10, 50px);
+  grid-template-rows: repeat(10, 50px);
+  gap: 1px;
+  background-color: #eee; /* Couleur de fond du labyrinthe */
+}
+
+.labyrinth div {
+  background-color: #fff; /* Couleur des cases du labyrinthe */
+  border: 1px solid #ccc; /* Bordures entre les cases */
+}
+
+.labyrinth .player {
+  background-color: #00f; /* Couleur du joueur */
+}
