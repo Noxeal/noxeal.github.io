@@ -1,106 +1,92 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const labyrinth = document.getElementById('labyrinth');
-  const gridSize = 10; // Taille du labyrinthe (10x10 cases dans cet exemple)
-  let playerPosition = { x: 0, y: 0 }; // Position initiale du joueur
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const ball = document.getElementById('ball');
 
-  function generateLabyrinth() {
-    const cells = [];
-    for (let i = 0; i < gridSize * gridSize; i++) {
-      cells.push({ x: i % gridSize, y: Math.floor(i / gridSize), walls: { top: true, right: true, bottom: true, left: true } });
+let isDrawing = false;
+let path = [];
 
-      // Create a new .cell element for each cell object
-      const cellElement = document.createElement('div');
-      cellElement.classList.add('cell');
-      labyrinth.appendChild(cellElement);
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', drawPath);
+canvas.addEventListener('mouseup', endDrawing);
 
-    }
+function startDrawing(event) {
+  isDrawing = true;
+  path = [];
+  const { offsetX, offsetY } = event;
+  path.push({ x: offsetX, y: offsetY });
+}
 
-    console.log(cells);
-  
-    divide(cells, 0, 0, gridSize, gridSize);
-    cells.forEach(cell => {
-      const cellElement = document.querySelector(`.cell:nth-child(${cell.y * gridSize + cell.x + 1})`);
-      if (cell.walls.top) cellElement.style.borderTop = '1px solid #ccc';
-      if (cell.walls.right) cellElement.style.borderRight = '1px solid #ccc';
-      if (cell.walls.bottom) cellElement.style.borderBottom = '1px solid #ccc';
-      if (cell.walls.left) cellElement.style.borderLeft = '1px solid #ccc';
-    });
+function drawPath(event) {
+  if (isDrawing) {
+    const { offsetX, offsetY } = event;
+    path.push({ x: offsetX, y: offsetY });
+    drawLine();
   }
-  
-  function divide(cells, x, y, width, height) {
-    if (width < 2 || height < 2) {
-      return;
-    }
-  
-    const horizontal = height > width;
-    const wallX = x + (horizontal ? 0 : Math.floor(Math.random() * (width - 1)));
-    const wallY = y + (horizontal ? Math.floor(Math.random() * (height - 1)) : 0);
-    const passageX = wallX + (horizontal ? Math.floor(Math.random() * width) : 0);
-    const passageY = wallY + (horizontal ? 0 : Math.floor(Math.random() * height));
-  
-    cells.forEach(cell => {
-      if ((horizontal && cell.x === wallX && cell.y === passageY) ||
-          (!horizontal && cell.x === passageX && cell.y === wallY)) {
-        if (horizontal && cell.x !== passageX) {
-          cell.walls.right = false;
-          cell.walls.left = false;
-        } else if (!horizontal && cell.y !== passageY) {
-          cell.walls.top = false;
-          cell.walls.bottom = false;
-        }
-      }
-    });
-  
-    divide(cells, x, y, horizontal ? width : wallX - x + 1, horizontal ? wallY - y + 1 : height);
-    divide(cells, horizontal ? x : wallX + 1, horizontal ? wallY + 1 : y, horizontal ? width : x + width - wallX - 1, horizontal ? height - wallY - 1 : height);
+}
+
+function endDrawing() {
+  isDrawing = false;
+  moveBall();
+}
+
+function drawLine() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.beginPath();
+  ctx.moveTo(path[0].x, path[0].y);
+  for (let i = 1; i < path.length; i++) {
+    ctx.lineTo(path[i].x, path[i].y);
   }
-  
-  function renderPlayer() {
-    const playerCell = document.querySelector(`.cell:nth-child(${playerPosition.y * gridSize + playerPosition.x + 1})`);
-    playerCell.classList.add('player');
-  }
+  ctx.stroke();
+}
 
-  function movePlayer(direction) {
-    const newPosition = { ...playerPosition };
 
-    if (direction === 'left' && playerPosition.x > 0) {
-      newPosition.x -= 1;
-    } else if (direction === 'right' && playerPosition.x < gridSize - 1) {
-      newPosition.x += 1;
-    } else if (direction === 'down' && playerPosition.y < gridSize - 1) {
-      newPosition.y += 1;
-    } else if (direction === 'up' && playerPosition.y > 0) {
-      newPosition.y -= 1;
-    }
-      
+const speedSlider = document.getElementById('speedSlider');
+let speed = parseInt(speedSlider.value);
 
-    const currentCell = document.querySelector(`.cell:nth-child(${playerPosition.y * gridSize + playerPosition.x + 1})`);
-    currentCell.classList.remove('player');
-
-    playerPosition = newPosition;
-    renderPlayer();
-  }
-
-  function handleKeyDown(event) {
-    switch (event.key) {
-      case 'ArrowLeft':
-        movePlayer('left');
-        break;
-      case 'ArrowRight':
-        movePlayer('right');
-        break;
-      case 'ArrowDown':
-        movePlayer('down');
-        break;
-
-      case 'ArrowUp':
-        movePlayer('up');
-        break;
-    }
-  }
-
-  document.addEventListener('keydown', handleKeyDown);
-
-  generateLabyrinth();
-  renderPlayer();
+speedSlider.addEventListener('input', () => {
+  speed = parseInt(speedSlider.value);
 });
+
+function moveBall() {
+  let progress = 0; // Pour suivre la progression le long du segment
+  let currentIndex = 0;
+
+  function animate() {
+    if (currentIndex < path.length - 1) {
+      const startX = path[currentIndex].x;
+      const startY = path[currentIndex].y;
+      const endX = path[currentIndex + 1].x;
+      const endY = path[currentIndex + 1].y;
+
+      const dx = endX - startX;
+      const dy = endY - startY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const ratio = progress / distance;
+
+      if (progress <= distance) {
+        const x = startX + dx * ratio;
+        const y = startY + dy * ratio;
+
+        ball.style.left = x + 'px';
+        ball.style.top = y + 'px';
+
+        console.log(`Balle en position (${x}, ${y}) sur le segment ${currentIndex + 1} sur ${path.length - 1}`);
+
+        progress += speed;
+      } else {
+        progress = 0;
+        currentIndex++;
+      }
+
+      requestAnimationFrame(animate);
+    } else {
+      console.log('Animation terminée.');
+    }
+  }
+
+  console.log('Début de l\'animation...');
+  animate();
+}
+
+moveBall();

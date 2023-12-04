@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Labyrinthe</title>
+  <title>Game</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="labyrinth" id="labyrinth">
-    <div class="cell"></div>
+  <div class="game-container">
+    <canvas id="canvas" width="400" height="600"></canvas>
+    <input type="range" min="1" max="1000" value="115" id="speedSlider">
+    <label for="speedSlider">Speed</label>
+    <div id="ball"></div>
   </div>
   <script src="js/generator.js"></script>
 </body>

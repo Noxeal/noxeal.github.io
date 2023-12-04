@@ -1,0 +1,49 @@
+/* Variables de couleurs */
+:root{
+    --bg-color: #2D232E;
+    --bg-color2: #474448;
+    --ball-color: #E0DDCF;
+    --ball-color2: #534B52;
+    --ball-color3: #F1F0EA;
+}
+
+body{
+    background-color: var(--bg-color);
+    color: var(--ball-color3);
+}
+
+h1{
+    color: var(--ball-color);
+}
+
+header{
+    display: flex;
+    /* Centrer les éléments du header */
+    justify-content: center;
+    align-items: center;
+}
+
+.ball{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--ball-color);
+    position: absolute;
+}
+
+
+.square{
+    width: 100px;
+    height: 100px;
+    background-color: var(--ball-color2);
+    position: absolute;
+}
+
+.triangle{
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 100px solid var(--ball-color3);
+    position: absolute;
+}

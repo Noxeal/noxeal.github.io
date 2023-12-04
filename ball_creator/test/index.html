@@ -1,0 +1,120 @@
+<div id="container-left">
+    <div class="pair">
+        <input class="button" id="switchCollision" type="button" value="Switch Collision Type"/>
+        <br>
+        <label class="label" id="switchCollisionLabel" for="switchCollision">Push</label>
+    </div>
+    <div class="pair">
+        <input class="button" id="toggleGravity" type="button" value="Toggle Gravity Mode"/>
+        <br>
+        <label class="label" id="toggleGravityLabel" for="toggleGravity">Off</label>
+    </div>
+</div>
+
+<div id="container-right">
+    Examples:
+        <input class="button" id="pushExample" type="button" value="Pushing Through Objects"/>
+        <input class="button" id="gravityExample" type="button" value="Gravity Pulling Objects"/>
+        <input class="button" id="bounceExample" type="button" value="Bouncing Objects"/> <br>
+        <div style="text-align: center;"><b>Click and Hold to Create Circles (Hold Duration = Size)</b></div>
+</div>
+
+<div id="url">
+    <a href="https://github.com/MartinHeinz/physics-visual">Visit Repository at github.com/MartinHeinz/physics-visual</a>
+</div>
+<canvas id="canvas">
+</canvas>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('canvas'),
+        context = canvas.getContext('2d');
+
+        // resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', resizeCanvas, false);
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+    })();
+</script>
+<script type="text/javascript" src="index.js"></script>
+<style>
+    * {  /* to remove the top and left whitespace */
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body { /* just to be sure these are full screen*/
+        width: 100%;
+        height: 100%;
+    }
+
+    canvas { /* To remove the scrollbars */
+        height: 95%;
+        width: 100vw;
+        display: block;
+    }
+
+    #container-left {
+        bottom: 0;
+        left: 0;
+        position: relative;
+        height: 5%;
+        float: left;
+    }
+
+    #url {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    #container-right {
+        bottom: 0;
+        left: 0;
+        position: relative;
+        height: 5%;
+        float: right;
+
+        font-size: 16px;
+        font-family: Arial, serif;
+    }
+
+    div.pair {
+        float:left;
+        text-align: center;
+    }
+
+    .button {
+        background-color: white;
+        color: black;
+        border: 2px solid #555555;
+        border-radius: 2px;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+
+        padding: 12px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+    }
+
+    .button:hover {
+        background-color: #555555;
+        color: white;
+    }
+
+    .label {
+        font-size: 16px;
+        pointer-events: none;
+        font-family: Arial, serif;
+    }
+
+</style>
