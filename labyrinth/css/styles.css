@@ -1,8 +1,8 @@
 /* Style du conteneur du jeu */
 .game-container {
   position: relative;
-  width: 400px; /* Ajuste la taille selon tes besoins */
-  height: 600px; /* Ajuste la taille selon tes besoins */
+  width: 100%; /* Ajuste la taille selon tes besoins */
+  height: 100%; /* Ajuste la taille selon tes besoins */
 }
 
 /* Style du chemin */
@@ -16,11 +16,6 @@
   rotate: 0deg; /* Rotation du chemin */
 }
 
-/* Style pour le canvas */
-#canvas {
-  border: 2px solid #000;
-}
-
 /* Style de la balle */
 #ball {
   position: absolute;
@@ -30,4 +25,30 @@
   height: 20px; /* Taille de la balle */
   border-radius: 50%; /* Pour rendre la balle ronde */
   background-color: #00f; /* Couleur de la balle */
+}
+
+#container {
+  position: relative;
+}
+
+.point {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.start {
+  background-color: green;
+}
+
+.end {
+  background-color: red;
+}
+
+#canvas {
+  position: relative;
+  width: 95%;
+  height: 90vh;
+  border: 1px solid #000;
 }

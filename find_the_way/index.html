@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>FindPath</title>
+    <meta name="author" content="Spicy Yoghurt">
+    
+    <script type="text/javascript" src="js/GameWorld.js"></script>
+    <script type="text/javascript" src="js/GameObject.js"></script>
+    <script type="text/javascript" src="js/Wall.js"></script>
+    <script type="text/javascript" src="js/Square.js"></script>
+    <script type="text/javascript" src="js/Ball.js"></script>
+
+</head>
+<body>
+    <canvas id="canvasJeu" style="border:1px solid lightgrey;"></canvas>
+    <script type="text/javascript" src="js/canvaDimensions.js"></script>
+    <script>
+        // Listen to the onLoad event, then create a game world
+        window.onload = function (){
+            let gameWorld = new GameWorld('canvasJeu');
+        }
+    </script>
+
+
+</body>
+</html>

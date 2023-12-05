@@ -1,6 +1,38 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const ball = document.getElementById('ball');
+const startPoint = document.getElementById('startPoint');
+const endPoint = document.getElementById('endPoint');
+const obstaclesCount = 10; // Nombre d'obstacles à générer
+const obstacles = [];
+
+// Génération aléatoire des obstacles
+for (let i = 0; i < obstaclesCount; i++) {
+    const obstacle = {
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      width: Math.random() * 50 + 20, // Largeur aléatoire entre 20 et 70
+      height: Math.random() * 50 + 20, // Hauteur aléatoire entre 20 et 70
+    };
+    obstacles.push(obstacle);
+  }
+  
+  // Positionnement des points de départ et d'arrivée
+  startPoint.style.left = '10px';
+  startPoint.style.top = (canvas.height / 2 - 10) + 'px';
+  
+  endPoint.style.left = (canvas.width - 30) + 'px';
+  endPoint.style.top = (canvas.height / 2 - 10) + 'px';
+  
+  // Dessin des obstacles
+  function drawObstacles() {
+    obstacles.forEach(obstacle => {
+      ctx.fillStyle = 'black';
+      ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+    });
+  }
+  
+  drawObstacles();
+
 
 let isDrawing = false;
 let path = [];
@@ -33,6 +65,8 @@ function drawLine() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
   ctx.moveTo(path[0].x, path[0].y);
+  // Épaisseur de la ligne
+  ctx.lineWidth = 100;
   for (let i = 1; i < path.length; i++) {
     ctx.lineTo(path[i].x, path[i].y);
   }

@@ -1,0 +1,25 @@
+.game-container {
+    position: relative;
+    width: 400px; /* Taille du conteneur du jeu */
+    height: 600px;
+    border: 2px solid #000; /* Pour visualiser le conteneur */
+}
+
+.ball {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    border-radius: 50%; /* Pour rendre la balle ronde */
+    position: absolute;
+    top: 0; /* Position initiale de la balle */
+    left: 50%; /* Position initiale de la balle */
+    transform: translate(-50%, 0); /* Pour centrer horizontalement */
+}
+
+.path {
+    width: 100%;
+    height: 400px; /* Hauteur du chemin */
+    background-color: brown;
+    position: absolute;
+    bottom: 0;
+}
