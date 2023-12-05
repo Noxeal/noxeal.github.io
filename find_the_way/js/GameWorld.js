@@ -2,7 +2,7 @@ console.log("GameWorld.js loaded");
 
 
 // Set a restitution, a lower value will lose more energy when colliding
-const restitution = 1.1;
+const restitution = 1.3;
 
 class GameWorld {
 
@@ -30,9 +30,8 @@ class GameWorld {
 
     createWorld() {
         this.gameObjects = [
-            new Ball(this.context, 250, 50, 0, 100, 1),
-            // new Ball (this.context, 150, 50, 0, 100, 1),
-            // new Wall(this.context, 100, 100, 10, 600, 100, 100),
+            new Ball(this.context, 250, 50, 100, 100, 1),
+            new Ball (this.context, 150, 50, 20, 100, 1),
         ];
 
         // console.log(this.gameObjects);
@@ -111,7 +110,7 @@ class GameWorld {
 
                     let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
 
-                    speed *= Math.min(obj1.restitution, obj2.restitution);
+                    // speed *= Math.min(obj1.restitution, obj2.restitution);
 
                     if (speed < 0) {
                         break;
