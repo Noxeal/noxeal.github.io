@@ -2,7 +2,10 @@ console.log("GameWorld.js loaded");
 
 
 // Set a restitution, a lower value will lose more energy when colliding
-const restitution = 1.3;
+const restitution = 0.95;
+
+var audio = new Audio('audio/BounceSoundv2.mp3');
+// var audio = new Audio('audio/rien.mp3');
 
 class GameWorld {
 
@@ -30,8 +33,8 @@ class GameWorld {
 
     createWorld() {
         this.gameObjects = [
-            new Ball(this.context, 250, 50, 100, 100, 1),
-            new Ball (this.context, 150, 50, 20, 100, 1),
+            new Ball(this.context, 100, 50, 100, 100, 400),
+            // new Ball (this.context, canvasWidth - 100, 50, -100, 100, 1),
         ];
 
         // console.log(this.gameObjects);
@@ -47,6 +50,9 @@ class GameWorld {
             new Wall(this.context, 100, 100, 600, 10, 100, 100),
             new Wall(this.context, 100, 700, 600, 10, 100, 100),
             new Wall(this.context, 700, 100, 10, 600, 100, 100),
+
+            // Mur horizontal au milieu
+            new Wall(this.context, 100, 400, 600, 10, 100, 100),
         ];
 
     }
@@ -100,6 +106,9 @@ class GameWorld {
                 obj2 = this.gameObjects[j];
 
                 if (this.circleIntersect(obj1.x, obj1.y, obj1.radius, obj2.x, obj2.y, obj2.radius)) {
+
+                    audio.play();
+
                     obj1.isColliding = true;
                     obj2.isColliding = true;
 
@@ -152,39 +161,38 @@ class GameWorld {
 
 
     detectCollisionsWithWalls() {
-        // Dans la méthode gameLoop de GameWorld après la détection des collisions entre les objets
-        // Ajoute une détection de collision entre la balle et les murs
+        let ball;
+        let wall;
+
         for (let i = 0; i < this.gameObjects.length; i++) {
-            const gameObject = this.gameObjects[i];
+            ball = this.gameObjects[i];
+            for (let j = 0; j < this.walls.length; j++) {
+                wall = this.walls[j];
 
-            if (gameObject instanceof Ball) {
-                for (let j = 0; j < this.walls.length; j++) {
-                    const wall = this.walls[j];
-                    if (this.collisionCheckCircleRect(
-                        gameObject, wall
-                    )) {
-                        console.log("Collision détectée");
-                        // // Collision détectée
-                        // // Calcul du point d'impact le plus proche
-                        // let closestX = clamp(gameObject.x, wall.x, wall.x + wall.width);
-                        // let closestY = clamp(gameObject.y, wall.y, wall.y + wall.height);
+                if (this.rectIntersect(ball.x, ball.y, ball.radius, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
+                    ball.isColliding = true;
+                    wall.isColliding = true;
 
-                        // // Calcul du vecteur entre le centre de la balle et le point d'impact
-                        // let normalVector = { x: gameObject.x - closestX, y: gameObject.y - closestY };
+                    audio.play();
 
-                        // // Normalise le vecteur
-                        // let length = Math.sqrt(normalVector.x * normalVector.x + normalVector.y * normalVector.y);
-                        // normalVector.x /= length;
-                        // normalVector.y /= length;
+                    let vCollision = {x: wall.x - ball.x, y: wall.y - ball.y};
+                    let distance = Math.sqrt((wall.x-ball.x)*(wall.x-ball.x) + (wall.y-ball.y)*(wall.y-ball.y));
+                    let vCollisionNorm = {x: vCollision.x / distance, y: vCollision.y / distance};
+                    let vRelativeVelocity = {x: ball.vx - wall.vx, y: ball.vy - wall.vy};
 
-                        // // Calcule la composante de la vitesse de la balle dans la direction normale
-                        // let speedNormal = gameObject.vx * normalVector.x + gameObject.vy * normalVector.y;
+                    let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
 
-                        // // Calcule la nouvelle vitesse après rebond en inversant la composante normale
-                        // gameObject.vx -= 2 * speedNormal * normalVector.x;
-                        // gameObject.vy -= 2 * speedNormal * normalVector.y;
-                        // }
+                    // speed *= Math.min(obj1.restitution, obj2.restitution);
+
+                    if (speed < 0) {
+                        break;
                     }
+
+                    let impulse = 2 * speed / (ball.mass + wall.mass);
+                    ball.vx -= (impulse * wall.mass * vCollisionNorm.x);
+                    ball.vy -= (impulse * wall.mass * vCollisionNorm.y);
+                    wall.vx += (impulse * ball.mass * vCollisionNorm.x);
+                    wall.vy += (impulse * ball.mass * vCollisionNorm.y);
                 }
             }
         }
@@ -201,18 +209,26 @@ class GameWorld {
             if (obj.x < obj.radius){
                 obj.vx = Math.abs(obj.vx) * restitution;
                 obj.x = obj.radius;
+                audio.play();
+
             }else if (obj.x > canvasWidth - obj.radius){
                 obj.vx = -Math.abs(obj.vx) * restitution;
                 obj.x = canvasWidth - obj.radius;
+                audio.play();
+
             }
 
             // Check for bottom and top
             if (obj.y < obj.radius){
                 obj.vy = Math.abs(obj.vy) * restitution;
                 obj.y = obj.radius;
+                audio.play();
+
             } else if (obj.y > canvasHeight - obj.radius){
                 obj.vy = -Math.abs(obj.vy) * restitution;
                 obj.y = canvasHeight - obj.radius;
+                audio.play();
+
             }
         }
     }

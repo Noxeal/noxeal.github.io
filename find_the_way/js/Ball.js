@@ -24,13 +24,13 @@ class Ball extends GameObject {
 
     update(secondsPassed) {
         // Apply acceleration
-        this.vy += g * secondsPassed;
+        this.vy += g * secondsPassed * this.mass;
 
         // Move with set velocity
         this.x += this.vx * secondsPassed;
         this.y += this.vy * secondsPassed;
 
-        // console.log("Ball x: " + this.x + " y: " + this.y + " vx: " + this.vx + " vy: " + this.vy);
+        console.log("Ball x: " + this.x + " y: " + this.y + " vx: " + this.vx + " vy: " + this.vy);
 
     }
 }
