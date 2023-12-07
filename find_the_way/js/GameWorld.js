@@ -1,8 +1,15 @@
 console.log("GameWorld.js loaded");
 
+// TODO : Sliders de restitution, masse et friction à implémenter
 
 // Set a restitution, a lower value will lose more energy when colliding
-const restitution = 0.95;
+var restitution = 0.9;
+
+// Set a friction, a lower value will slow down the object faster
+var friction = 0;
+
+// Set the mass of the ball
+var mass = 400;
 
 var audio = new Audio('audio/BounceSoundv2.mp3');
 // var audio = new Audio('audio/rien.mp3');
@@ -33,26 +40,39 @@ class GameWorld {
 
     createWorld() {
         this.gameObjects = [
-            new Ball(this.context, 100, 50, 100, 100, 400),
-            // new Ball (this.context, canvasWidth - 100, 50, -100, 100, 1),
+            // new Ball(this.context, 100, 50, 100, 100, 400),
+            new Ball (this.context, canvasWidth / 2 + 300, 0, 1000, 0, mass, 20),
         ];
+        // // Génération de balles de taille, vitesse et masse aléatoire
+        // for (let i = 0; i < 10; i++) {
+        //     this.gameObjects[i] = new Ball(this.context, Math.random() * canvasWidth, Math.random() * canvasHeight, Math.random() * 200 - 100, Math.random() * 200 - 100, Math.random() * 50 + 20, Math.random() * 50 + 20)
+        // }
+
+        // this.gameObjects[10] = new Ball(this.context, 100, 50, 100, 100, 0);
+        // this.gameObjects[11] = new Square(this.context, 100, 50, 100, 100, 0);
 
         // console.log(this.gameObjects);
 
         this.walls = [
-            new Wall(this.context, 0, 0, 10, this.canvas.height, 100, 100),
-            new Wall(this.context, 0, 0, this.canvas.width, 10, 100, 100),
-            new Wall(this.context, this.canvas.width - 10, 0, 10, this.canvas.height, 100, 100),
-            new Wall(this.context, 0, this.canvas.height - 10, this.canvas.width, 10, 100, 100),
+            // new Wall(this.context, 0, 0, 10, this.canvas.height, 100, 100),
+            // new Wall(this.context, 0, 0, this.canvas.width, 10, 100, 100),
+            // new Wall(this.context, this.canvas.width - 10, 0, 10, this.canvas.height, 100, 100),
+            // new Wall(this.context, 0, this.canvas.height - 10, this.canvas.width, 10, 100, 100),
 
-            // Murs 
-            new Wall(this.context, 100, 100, 10, 600, 100, 100),
-            new Wall(this.context, 100, 100, 600, 10, 100, 100),
-            new Wall(this.context, 100, 700, 600, 10, 100, 100),
-            new Wall(this.context, 700, 100, 10, 600, 100, 100),
+            // // Murs 
+            // new Wall(this.context, 100, 100, 10, 600, 100, 100),
+            // new Wall(this.context, 100, 100, 600, 10, 100, 100),
+            // new Wall(this.context, 100, 700, 600, 10, 100, 100),
+            // new Wall(this.context, 700, 100, 10, 600, 100, 100),
 
             // Mur horizontal au milieu
-            new Wall(this.context, 100, 400, 600, 10, 100, 100),
+            new Wall(this.context, 0, 0, canvasWidth / 3, canvasHeight / 3),
+
+            // Mur horizontal au milieu
+            new Wall(this.context, 0, canvasHeight / 2, canvasWidth, 20),
+
+            // Voir pour murs penchés
+            
         ];
 
     }
@@ -71,7 +91,9 @@ class GameWorld {
 
         this.detectEdgeCollisions();
 
-        // this.detectCollisionsWithWalls();
+        this.detectCollisionsWithWalls();
+
+        updateSliders();
 
         this.clearCanvas();
 
@@ -154,48 +176,34 @@ class GameWorld {
         return squareDistance <= ((r1 + r2) * (r1 + r2));
     }
 
+    circleIntersectRect(circleX, circleY, circleRadius, rectX, rectY, rectWidth, rectHeight) {
+            
+            // Temporary variables to set edges for testing
+            let testX = circleX;
+            let testY = circleY;
+    
+            // Which edge is closest?
+            if (circleX < rectX)         testX = rectX;      // test left edge
+            else if (circleX > rectX+rectWidth) testX = rectX+rectWidth;   // right edge
+            if (circleY < rectY)         testY = rectY;      // top edge
+            else if (circleY > rectY+rectHeight) testY = rectY+rectHeight;   // bottom edge
+    
+            // Get distance from closest edges
+            let distX = circleX-testX;
+            let distY = circleY-testY;
+            let distance = Math.sqrt( (distX*distX) + (distY*distY) );
+    
+            // If the distance is less than the radius, collision!
+            if (distance <= circleRadius) {
+                console.log("Collision !");
+                return true;
+            }
+            return false;
+        }
+
     clearCanvas() {
         // Clear the canvas
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
-
-
-    detectCollisionsWithWalls() {
-        let ball;
-        let wall;
-
-        for (let i = 0; i < this.gameObjects.length; i++) {
-            ball = this.gameObjects[i];
-            for (let j = 0; j < this.walls.length; j++) {
-                wall = this.walls[j];
-
-                if (this.rectIntersect(ball.x, ball.y, ball.radius, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
-                    ball.isColliding = true;
-                    wall.isColliding = true;
-
-                    audio.play();
-
-                    let vCollision = {x: wall.x - ball.x, y: wall.y - ball.y};
-                    let distance = Math.sqrt((wall.x-ball.x)*(wall.x-ball.x) + (wall.y-ball.y)*(wall.y-ball.y));
-                    let vCollisionNorm = {x: vCollision.x / distance, y: vCollision.y / distance};
-                    let vRelativeVelocity = {x: ball.vx - wall.vx, y: ball.vy - wall.vy};
-
-                    let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
-
-                    // speed *= Math.min(obj1.restitution, obj2.restitution);
-
-                    if (speed < 0) {
-                        break;
-                    }
-
-                    let impulse = 2 * speed / (ball.mass + wall.mass);
-                    ball.vx -= (impulse * wall.mass * vCollisionNorm.x);
-                    ball.vy -= (impulse * wall.mass * vCollisionNorm.y);
-                    wall.vx += (impulse * ball.mass * vCollisionNorm.x);
-                    wall.vy += (impulse * ball.mass * vCollisionNorm.y);
-                }
-            }
-        }
     }
 
     detectEdgeCollisions(){
@@ -209,12 +217,12 @@ class GameWorld {
             if (obj.x < obj.radius){
                 obj.vx = Math.abs(obj.vx) * restitution;
                 obj.x = obj.radius;
-                audio.play();
+                // audio.play();
 
             }else if (obj.x > canvasWidth - obj.radius){
                 obj.vx = -Math.abs(obj.vx) * restitution;
                 obj.x = canvasWidth - obj.radius;
-                audio.play();
+                // audio.play();
 
             }
 
@@ -222,15 +230,66 @@ class GameWorld {
             if (obj.y < obj.radius){
                 obj.vy = Math.abs(obj.vy) * restitution;
                 obj.y = obj.radius;
-                audio.play();
+                // audio.play();
 
             } else if (obj.y > canvasHeight - obj.radius){
                 obj.vy = -Math.abs(obj.vy) * restitution;
                 obj.y = canvasHeight - obj.radius;
-                audio.play();
+                // audio.play();
 
             }
         }
     }
-    
+
+
+    detectCollisionsWithWalls() {
+        let ball;
+        let wall;
+        
+        for (let i = 0; i < this.gameObjects.length; i++) {
+            ball = this.gameObjects[i];
+            for (let j = 0; j < this.walls.length; j++) {
+                wall = this.walls[j];
+
+                // Si la balle touche un mur
+                if (this.circleIntersectRect(ball.x, ball.y, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
+
+                    // Calcul de la direction de la balle par rapport au mur
+                    const dx = (ball.x < wall.x) ? wall.x - ball.x : (ball.x > wall.x + wall.width) ? ball.x - (wall.x + wall.width) : 0;
+                    const dy = (ball.y < wall.y) ? wall.y - ball.y : (ball.y > wall.y + wall.height) ? ball.y - (wall.y + wall.height) : 0;
+
+                    // Détermination du rebond en fonction de la direction
+                    if (dx > dy) {
+                        ball.vx *= -restitution; // Rebond horizontal
+                        // Ajuster la position horizontalement
+                        ball.x += ball.vx > 0 ? -1 : 1;
+                    } else {
+                        ball.vy *= -restitution; // Rebond vertical
+                        // Ajuster la position verticalement
+                        ball.y += ball.vy > 0 ? -1 : 1;
+                    }
+
+                    // Ajuster la position de la balle pour qu'elle ne pénètre pas dans le mur
+                    if (ball.x < wall.x) {
+                        ball.x = wall.x - ball.radius;
+                    } else if (ball.x > wall.x + wall.width) {
+                        ball.x = wall.x + wall.width + ball.radius;
+                    } else if (ball.y < wall.y) {
+                        ball.y = wall.y - ball.radius;
+                    } else if (ball.y > wall.y + wall.height) {
+                        ball.y = wall.y + wall.height + ball.radius;
+                    }
+
+                    // Appliquer la friction avec tous les murs
+                    ball.vx *= (1 - friction);
+
+                    // Arrêter le mouvement si la vitesse devient très faible
+                    if (Math.abs(ball.vx) < 0.1) {
+                        ball.vx = 0;
+                    }
+                }
+            }
+        }
+    }
+
 }

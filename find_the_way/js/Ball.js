@@ -20,6 +20,8 @@ class Ball extends GameObject {
         this.context.moveTo(this.x, this.y);
         this.context.lineTo(this.x + this.vx, this.y + this.vy);
         this.context.stroke();
+
+        console.log("Masse : " + this.mass + " | vx : " + this.vx + " | vy : " + this.vy);
     }
 
     update(secondsPassed) {
@@ -30,7 +32,7 @@ class Ball extends GameObject {
         this.x += this.vx * secondsPassed;
         this.y += this.vy * secondsPassed;
 
-        console.log("Ball x: " + this.x + " y: " + this.y + " vx: " + this.vx + " vy: " + this.vy);
+        console.log("vx > 0 : " + (this.vx > 0) + " | vy > 0 : " + (this.vy > 0));
 
     }
 }

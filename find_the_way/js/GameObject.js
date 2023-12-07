@@ -1,5 +1,7 @@
 console.log("GameObject.js loaded");
 
+
+// Possibilité d'ajouter de la restitution pour chaque objet, mais inutile dans notre cas
 class GameObject
 {
     constructor (context, x, y, vx, vy, mass){
