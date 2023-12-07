@@ -1,7 +1,5 @@
 console.log("GameWorld.js loaded");
 
-// TODO : Sliders de restitution, masse et friction à implémenter
-
 // Set a restitution, a lower value will lose more energy when colliding
 var restitution = 0.9;
 
@@ -9,7 +7,10 @@ var restitution = 0.9;
 var friction = 0;
 
 // Set the mass of the ball
-var mass = 400;
+var generalMass = 400;
+
+// Set the rotation of the walls
+var rotationAngle = 0;
 
 var audio = new Audio('audio/BounceSoundv2.mp3');
 // var audio = new Audio('audio/rien.mp3');
@@ -41,7 +42,7 @@ class GameWorld {
     createWorld() {
         this.gameObjects = [
             // new Ball(this.context, 100, 50, 100, 100, 400),
-            new Ball (this.context, canvasWidth / 2 + 300, 0, 1000, 0, mass, 20),
+            new Ball (this.context, canvasWidth / 2 + 300, 0, 1000, 0, generalMass, 20),
         ];
         // // Génération de balles de taille, vitesse et masse aléatoire
         // for (let i = 0; i < 10; i++) {
@@ -254,7 +255,7 @@ class GameWorld {
                 // Si la balle touche un mur
                 if (this.circleIntersectRect(ball.x, ball.y, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
 
-                    // Calcul de la direction de la balle par rapport au mur
+                    // Calcul de la direction de la balle par rapport au mur et sa rotation
                     const dx = (ball.x < wall.x) ? wall.x - ball.x : (ball.x > wall.x + wall.width) ? ball.x - (wall.x + wall.width) : 0;
                     const dy = (ball.y < wall.y) ? wall.y - ball.y : (ball.y > wall.y + wall.height) ? ball.y - (wall.y + wall.height) : 0;
 
@@ -291,5 +292,7 @@ class GameWorld {
             }
         }
     }
+
+    
 
 }

@@ -2,7 +2,7 @@ console.log("canvaDimensions.js loaded");
 
 // Récupération de la taille de l'écran avec un peu de marge
 const canvasWidth = window.innerWidth - 30;
-const canvasHeight = window.innerHeight - 30;
+const canvasHeight = window.innerHeight - 100;
 
 console.log(canvasWidth);
 console.log(canvasHeight);

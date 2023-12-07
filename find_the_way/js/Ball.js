@@ -21,7 +21,7 @@ class Ball extends GameObject {
         this.context.lineTo(this.x + this.vx, this.y + this.vy);
         this.context.stroke();
 
-        console.log("Masse : " + this.mass + " | vx : " + this.vx + " | vy : " + this.vy);
+        // console.log("Masse : " + this.mass + " | vx : " + this.vx + " | vy : " + this.vy);
     }
 
     update(secondsPassed) {
@@ -32,7 +32,10 @@ class Ball extends GameObject {
         this.x += this.vx * secondsPassed;
         this.y += this.vy * secondsPassed;
 
-        console.log("vx > 0 : " + (this.vx > 0) + " | vy > 0 : " + (this.vy > 0));
+        // Mise à jour de la masse en temps réel
+        this.mass = generalMass
+
+        // console.log("vx > 0 : " + (this.vx > 0) + " | vy > 0 : " + (this.vy > 0));
 
     }
 }

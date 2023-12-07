@@ -5,12 +5,6 @@
 
     <title>FindPath</title>
     <meta name="author" content="Noxeal">
-    
-    <script type="text/javascript" src="js/GameWorld.js"></script>
-    <script type="text/javascript" src="js/GameObject.js"></script>
-    <script type="text/javascript" src="js/Wall.js"></script>
-    <script type="text/javascript" src="js/Square.js"></script>
-    <script type="text/javascript" src="js/Ball.js"></script>
 
 </head>
 <body>
@@ -20,7 +14,7 @@
     <label id="restitutionLabel" for="restitutionSlider">Restitution</label>
 
     <!-- Ajout d'un slider pour la friction -->
-    <input type="range" min="0" max="1" value="0" step="0.1" id="frictionSlider">
+    <input type="range" min="0" max="1" value="0.1" step="0.1" id="frictionSlider">
     <label id="frictionLabel" for="frictionSlider">Friction</label>
 
     <!-- Ajout d'un slider pour la masse de la balle -->
@@ -28,15 +22,24 @@
     <label id="massLabel" for="massSlider">Masse</label>
 
 
-    <script type="text/javascript" src="js/canvaDimensions.js"></script>
-    <script type="text/javascript" src="js/sliders.js"></script>
+
 
     <script>
         // Listen to the onLoad event, then create a game world
+        let gameWorld;
         window.onload = function (){
-            let gameWorld = new GameWorld('canvasJeu');
+            gameWorld = new GameWorld('canvasJeu');
         }
     </script>
+
+    <script type="text/javascript" src="js/GameWorld.js"></script>
+    <script type="text/javascript" src="js/GameObject.js"></script>
+    <script type="text/javascript" src="js/Wall.js"></script>
+    <script type="text/javascript" src="js/Square.js"></script>
+    <script type="text/javascript" src="js/Ball.js"></script>
+    <script type="text/javascript" src="js/rotateWalls.js"></script>
+    <script type="text/javascript" src="js/canvaDimensions.js"></script>
+    <script type="text/javascript" src="js/sliders.js"></script>
 
 
 </body>
