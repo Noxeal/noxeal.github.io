@@ -42,7 +42,7 @@ class GameWorld {
     createWorld() {
         this.gameObjects = [
             // new Ball(this.context, 100, 50, 100, 100, 400),
-            new Ball (this.context, canvasWidth / 2 + 300, 0, 1000, 0, generalMass, 20),
+            new Ball (this.context, canvasWidth / 2 + 300, 0, 0, 0, generalMass, 20),
         ];
         // // Génération de balles de taille, vitesse et masse aléatoire
         // for (let i = 0; i < 10; i++) {
@@ -207,6 +207,8 @@ class GameWorld {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+
+    // Pas d'application de friction avec les bords
     detectEdgeCollisions(){
 
         let obj;
@@ -246,30 +248,34 @@ class GameWorld {
     detectCollisionsWithWalls() {
         let ball;
         let wall;
-        
+    
         for (let i = 0; i < this.gameObjects.length; i++) {
             ball = this.gameObjects[i];
             for (let j = 0; j < this.walls.length; j++) {
                 wall = this.walls[j];
-
+    
                 // Si la balle touche un mur
                 if (this.circleIntersectRect(ball.x, ball.y, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
-
-                    // Calcul de la direction de la balle par rapport au mur et sa rotation
+    
+                    // Calcul de la direction de la balle par rapport au mur
                     const dx = (ball.x < wall.x) ? wall.x - ball.x : (ball.x > wall.x + wall.width) ? ball.x - (wall.x + wall.width) : 0;
                     const dy = (ball.y < wall.y) ? wall.y - ball.y : (ball.y > wall.y + wall.height) ? ball.y - (wall.y + wall.height) : 0;
-
-                    // Détermination du rebond en fonction de la direction
-                    if (dx > dy) {
-                        ball.vx *= -restitution; // Rebond horizontal
-                        // Ajuster la position horizontalement
-                        ball.x += ball.vx > 0 ? -1 : 1;
-                    } else {
-                        ball.vy *= -restitution; // Rebond vertical
-                        // Ajuster la position verticalement
-                        ball.y += ball.vy > 0 ? -1 : 1;
-                    }
-
+    
+                    // Calcul de la normale du mur
+                    const nx = -Math.sin(wall.rotation); // Composante x de la normale
+                    const ny = Math.cos(wall.rotation); // Composante y de la normale
+    
+                    // Calcul du produit scalaire
+                    const dot = ball.vx * nx + ball.vy * ny;
+    
+                    // Calcul des nouvelles vitesses après rebond
+                    const vnewx = ball.vx - 2 * dot * nx * restitution;
+                    const vnewy = ball.vy - 2 * dot * ny * restitution;
+    
+                    // Mettre à jour les vitesses de la balle après rebond
+                    ball.vx = vnewx;
+                    ball.vy = vnewy;
+    
                     // Ajuster la position de la balle pour qu'elle ne pénètre pas dans le mur
                     if (ball.x < wall.x) {
                         ball.x = wall.x - ball.radius;
@@ -280,10 +286,10 @@ class GameWorld {
                     } else if (ball.y > wall.y + wall.height) {
                         ball.y = wall.y + wall.height + ball.radius;
                     }
-
+    
                     // Appliquer la friction avec tous les murs
                     ball.vx *= (1 - friction);
-
+    
                     // Arrêter le mouvement si la vitesse devient très faible
                     if (Math.abs(ball.vx) < 0.1) {
                         ball.vx = 0;
@@ -292,7 +298,7 @@ class GameWorld {
             }
         }
     }
-
+    
     
 
 }

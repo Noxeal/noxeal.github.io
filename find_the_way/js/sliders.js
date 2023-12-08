@@ -16,12 +16,9 @@ function updateSliders() {
 
 // Slider de restitution
 const restitutionSlider = document.getElementById('restitutionSlider');
-restitution = parseInt(restitutionSlider.value);
 
 // Slider de masse
 const massSlider = document.getElementById('massSlider');
-generalMass = parseInt(massSlider.value);
 
 // Slider de friction
 const frictionSlider = document.getElementById('frictionSlider');
-friction = parseInt(frictionSlider.value);
