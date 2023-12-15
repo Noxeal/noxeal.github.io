@@ -32,3 +32,4 @@ function draw() {
     ctx.closePath();
     ctx.stroke();
 }
+

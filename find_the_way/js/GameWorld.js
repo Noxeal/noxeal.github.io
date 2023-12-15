@@ -98,6 +98,8 @@ class GameWorld {
 
         this.clearCanvas();
 
+        drawGrid(this.context, 100, canvasWidth, canvasHeight);
+
         // Loop over all game objects to draw
         for (let i = 0; i < this.gameObjects.length; i++) {
             this.gameObjects[i].draw();
@@ -177,30 +179,44 @@ class GameWorld {
         return squareDistance <= ((r1 + r2) * (r1 + r2));
     }
 
-    circleIntersectRect(circleX, circleY, circleRadius, rectX, rectY, rectWidth, rectHeight) {
-            
-            // Temporary variables to set edges for testing
-            let testX = circleX;
-            let testY = circleY;
+    circleIntersectRect(circleX, circleY, circleRadius, rectX, rectY, rectWidth, rectHeight, rotation) {
+        // Convertir les coordonnées du cercle dans le repère local du mur (rotation)
+        const cosRotation = Math.cos(-rotation);
+        const sinRotation = Math.sin(-rotation);
+        const localX = (circleX - rectX) * cosRotation - (circleY - rectY) * sinRotation + rectX;
+        const localY = (circleX - rectX) * sinRotation + (circleY - rectY) * cosRotation + rectY;
     
-            // Which edge is closest?
-            if (circleX < rectX)         testX = rectX;      // test left edge
-            else if (circleX > rectX+rectWidth) testX = rectX+rectWidth;   // right edge
-            if (circleY < rectY)         testY = rectY;      // top edge
-            else if (circleY > rectY+rectHeight) testY = rectY+rectHeight;   // bottom edge
+        // Trouver le point le plus proche du cercle sur le rectangle
+        let closestX, closestY;
     
-            // Get distance from closest edges
-            let distX = circleX-testX;
-            let distY = circleY-testY;
-            let distance = Math.sqrt( (distX*distX) + (distY*distY) );
-    
-            // If the distance is less than the radius, collision!
-            if (distance <= circleRadius) {
-                console.log("Collision !");
-                return true;
-            }
-            return false;
+        if (localX < rectX) {
+            closestX = rectX;
+        } else if (localX > rectX + rectWidth) {
+            closestX = rectX + rectWidth;
+        } else {
+            closestX = localX;
         }
+    
+        if (localY < rectY) {
+            closestY = rectY;
+        } else if (localY > rectY + rectHeight) {
+            closestY = rectY + rectHeight;
+        } else {
+            closestY = localY;
+        }
+    
+        // Calculer la distance entre le point le plus proche et le cercle
+        const distanceX = localX - closestX;
+        const distanceY = localY - closestY;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    
+        // Vérifier la collision
+        if (distance <= circleRadius) {
+            return true;
+        }
+        return false;
+    }
+    
 
     clearCanvas() {
         // Clear the canvas
@@ -255,7 +271,7 @@ class GameWorld {
                 wall = this.walls[j];
     
                 // Si la balle touche un mur
-                if (this.circleIntersectRect(ball.x, ball.y, ball.radius, wall.x, wall.y, wall.width, wall.height)) {
+                if (this.circleIntersectRect(ball.x, ball.y, ball.radius, wall.x, wall.y, wall.width, wall.height, rotationAngle)) {
     
                     // Calcul de la direction de la balle par rapport au mur
                     const dx = (ball.x < wall.x) ? wall.x - ball.x : (ball.x > wall.x + wall.width) ? ball.x - (wall.x + wall.width) : 0;

@@ -18,5 +18,7 @@ function rotateWalls(angle) {
     // Appliquer la transformation de rotation à tous les murs du canvas
     for (let i = 0; i < gameWorld.walls.length; i++) {
         gameWorld.walls[i].rotation = angle; // Modifier la propriété de rotation des murs (selon ta logique)
+        // On affiche les nouvelles valeurs de rotation des murs dans la console et leurs coordonnées
+        console.log("Wall " + i + " rotation : " + gameWorld.walls[i].rotation, " Coordinates : " + gameWorld.walls[i].x + " " + gameWorld.walls[i].y);
     }
 }
